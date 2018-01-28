@@ -1,0 +1,105 @@
+Les différents TOKEN à coder:
+
+******CARACTERES SPECIAUX******
+
+++    ----------    PLUS_PLUS_TOKEN
+--    ----------    MOINS_MOINS_TOKEN
++=    ----------    PLUS_EGALE_TOKEN
+-=    ----------    MOINS_EGALE_TOKEN
+*=    ----------    MULT_EGALE_TOKEN
+/=    ----------    DIV_EGALE_TOKEN
+%=    ----------    MOD_EGALE_TOKEN
+^=    ----------    PUISS_EGALE_TOKEN
+||    ----------    OU_TOKEN
+&&    ----------    ET_TOKEN
+==    ----------    EGALE_EGALE_TOKEN
+!=    ----------    DIFF_TOKEN
+<=    ----------    INF_EGALE_TOKEN
+>=    ----------    SUP_EGALE_TOKEN
+=     ----------    EGALE_TOKEN
+<     ----------    INF_TOKEN
+>     ----------    SUP_TOKEN
++     ----------    PLUS_TOKEN
+-     ----------    MOINS_TOKEN
+*     ----------    MULT_TOKEN
+/     ----------    DIV_TOKEN
+%     ----------    MOD_TOKEN
+{     ----------    ACCOL_OUV_TOKEN
+}     ----------    ACCOL_FER_TOKEN
+[     ----------    CROCH_OUV_TOKEN
+]     ----------    CROCH_FER_TOKEN
+(     ----------    PAR_OUV_TOKEN
+)     ----------    PAR_FER_TOKEN
+,     ----------    VIR_TOKEN
+.     ----------    POINT_TOKEN
+:     ----------    2_POINT_TOKEN
+;     ----------    POINT_VIRG_TOKEN
+
+
+******MOTS CLEFS******
+
+using       ---------    USING_TOKEN
+System      ---------    SYSTEM_TOKEN
+namespace   ---------    NAMESPACE_TOKEN
+class       ---------    CLASS_TOKEN
+private     ---------    PRIVATE_TOKEN
+public      ---------    PUBLIC_TOKEN
+static      ---------    STATIC_TOKEN
+void        ---------    VOID_TOKEN
+Main        ---------    MAIN_TOKEN
+params      ---------    PARAMS_TOKEN
+int         ---------    INT_TOKEN
+long        ---------    LONG_TOKEN
+char        ---------    CHAR_TOKEN
+float       ---------    FLOAT_TOKEN
+double      ---------    DOUBLE_TOKEN
+bool        ---------    BOOL_TOKEN
+string      ---------    STRING_TOKEN
+new         ---------    NEW_TOKEN
+Console     ---------    CONSOLE_TOKEN
+Writeline   ---------    WRITELINE_TOKEN
+const       ---------    CONST_TOKEN
+if          ---------    IF_TOKEN
+else        ---------    ELSE_TOKEN
+switch      ---------    SWITCH_TOKEN
+case        ---------    CASE_TOKEN
+break       ---------    BREAK_TOKEN
+default     ---------    DEFAULT_TOKEN
+while       ---------    WHILE_TOKEN
+do          ---------    DO_TOKEN
+for         ---------    FOR_TOKEN
+foreach     ---------    FOREACH_TOKEN
+in          ---------    IN_TOKEN
+
+continue    ---------    CONTINUE_TOKEN
+return      ---------    RETURN_TOKEN
+true        ---------    TRUE_TOKEN
+false       ---------    FALSE_TOKEN
+
+
+******AUTRES******
+!!!! Dans ce cas la valeur du token est aussi à stocker !!!!
+
+INUM_TOKEN       (un nombre entier)
+FNUM_TOKEN       (un nombre avec virgule)
+CHAINE_TOKEN     (une chaine de charactères)
+CHARACTER_TOKEN  (un charactère)
+IDF_TOKEN        (un identificateur ( =lettre {character} )
+METH_IDF_TOKEN   (c'est un identificateur mais qui représente le nom d'une méthode)
+
+
+
++++ QUELQUES REMARQUES:
+
+1- Attention à la sensibilité à la casse (par exp: NEW donne IDF_TOKEN non pas NEW_TOKEN).
+2- Pour différencier METH_IDF_TOKEN de IDF_TOKEN on peut ne considérer dans un premier temps que IDF_TOKEN, et puis, une fois on a terminé,
+on revient vers chaque IDF_TOKEN et on vérifie si c'est un METH_IDF_TOKEN (si par exp il est suivi par une parenthèse ouvrante PAR_OUV_TOKEN ou
+... (à vous de jouer)) ou pas.
+
+
+
+
+
+
+
+
