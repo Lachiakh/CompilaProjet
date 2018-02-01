@@ -10,14 +10,10 @@ extern int caractereCourant ;
 extern Symbole symboleCourant;
 
 
-Dlist *dlist_new(void) ;
-Dlist *dlist_append(Dlist *p_list,Symbole symbole) ;
-void dlist_delete(Dlist **p_list) ;
-void getNext() ;
-void getBack() ;
-
 Dlist *list = NULL; /* Déclaration d'une liste vide */
 node_token *node_token_courant ;
+
+
 int main( int argc, char ** argv ) {
     OuvrirFichier("source.txt");
     LireCaractere();

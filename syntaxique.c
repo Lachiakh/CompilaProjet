@@ -7,7 +7,7 @@
 
 extern node_token* node_token_courant ;
 extern Symbole symboleCourant;
-
+extern Dlist *list ;
 //_________________________________START__________________________
 bool _start(){
 	bool result=false;
@@ -48,7 +48,7 @@ bool _program(){
 					getNext();
 					if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
 						getNext();
-						if(node_token_courant->Symbole_Courant.code==EOF_TOKEN){
+						if(node_token_courant->Symbole_Courant.code==FIN_TOKEN){
 							result= true;
 						}
 					}
@@ -85,14 +85,13 @@ bool _name_space_implement(){
 bool _p_p(){
 	bool result=false;
 	if(node_token_courant->Symbole_Courant.code==PRIVATE_TOKEN || node_token_courant->Symbole_Courant.code==PUBLIC_TOKEN){
-		result=true
+		result=true ;
 	}
 	return result;
 }
 
 bool _class_implement(){
 	bool result=false;
-	bool loop=true;
 	while(_methode_declaration()){
 		getNext();
 	}
@@ -168,7 +167,7 @@ bool _methode_name(){
 	return result;
 }
 
-bool _formal_parameter_list{
+bool _formal_parameter_list(){
 	bool result= false;
 	bool loop=true;
 	if(_fixed_parameters()){
@@ -280,7 +279,6 @@ bool _block(){
 	bool result= false;
 	if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
         getNext();
-        bool loop=true;
         while(_statement()){
             getNext();
         }
@@ -299,7 +297,7 @@ bool _statement(){
 
 bool _embedded_statement(){
 	bool result= false;
-    if(_block() || _selection_statement() || _iteration_statement() || _jump_statement() || _try_statement()){
+    if(_block() || _selection_statement() || _iteration_statement() || _jump_statement()){
         result=true;
     }
     else if(_print() || _statement_expression()){
@@ -353,7 +351,7 @@ bool _print(){
 
 bool _declaration_statement(){
 	bool result= false;
-    if(_local_variable_declaration() || _ local_constant_declaration()){
+    if(_local_variable_declaration() || _local_constant_declaration()){
         getNext();
         if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
             result=true;
@@ -482,7 +480,7 @@ bool _selection_statement(){
         getNext();
         if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
             getNext();
-            if(_ boolean_expression()){
+            if(_boolean_expression()){
                 getNext();
                 if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
                     getNext();
@@ -511,7 +509,6 @@ bool _selection_statement(){
                     getNext();
                     if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
                         getNext();
-                        bool loop=true;
                         while(_switch_section()){
                             getNext();
                         }
@@ -570,7 +567,7 @@ bool _iteration_statement(){
     if(node_token_courant->Symbole_Courant.code==WHILE_TOKEN){
         if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
             getNext();
-            if(_ boolean_expression()){
+            if(_boolean_expression()){
                 getNext();
                 if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
                     getNext();
@@ -589,7 +586,7 @@ bool _iteration_statement(){
                 getNext();
                 if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
                     getNext();
-                    if(_ boolean_expression()){
+                    if(_boolean_expression()){
                         getNext();
                         if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
                             getNext();
@@ -808,7 +805,7 @@ bool _inclusive_or_expression(){
 
 bool _equality_operator(){
 	bool result= false;
-	if(node_token_courant->Symbole_Courant.code==EGALE_EGALE_TOKEN || node_token_courant->Symbole_Courant.code=DIFF_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==EGALE_EGALE_TOKEN || node_token_courant->Symbole_Courant.code==DIFF_TOKEN){
         result=true;
 	}
 	return result;
@@ -838,14 +835,13 @@ bool _relational_expression(){
 
 bool _relational_operator(){
 	bool result= false;
-    if(node_token_courant->Symbole_Courant.code==INF_TOKEN || node_token_courant->Symbole_Courant.code=INF_EGALE_TOKEN || node_token_courant->Symbole_Courant.code=SUP_TOKEN || node_token_courant->Symbole_Courant.code=SUP_EGALE_TOKEN){
+    if(node_token_courant->Symbole_Courant.code==INF_TOKEN || node_token_courant->Symbole_Courant.code==INF_EGALE_TOKEN || node_token_courant->Symbole_Courant.code==SUP_TOKEN || node_token_courant->Symbole_Courant.code==SUP_EGALE_TOKEN){
         result=true;
 	}
 	return result;
 }
 
 bool _additive_expression(){
-	bool result= false;
 	bool result= false;
 	bool already=false;
     if(_multiplicative_expression()){
@@ -865,12 +861,11 @@ bool _additive_expression(){
         }
     }
 	return result;
-	return result;
 }
 
 bool _additive_operator(){
 	bool result= false;
-	if(node_token_courant->Symbole_Courant.code==PLUS_TOKEN || node_token_courant->Symbole_Courant.code=MOINS_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==PLUS_TOKEN || node_token_courant->Symbole_Courant.code==MOINS_TOKEN){
         result=true;
 	}
 	return result;
@@ -878,13 +873,12 @@ bool _additive_operator(){
 
 bool _multiplicative_expression(){
 	bool result= false;
-	bool result= false;
 	bool already=false;
-    if(_unary_expression()){
+    if(_primary_expression()){
         getNext();
         while(_multiplicative_operator() && !already){
             getNext();
-            if(_unary_expression()){
+            if(_primary_expression()){
                 getNext();
             }
             else{
@@ -897,12 +891,11 @@ bool _multiplicative_expression(){
         }
     }
 	return result;
-	return result;
 }
 
 bool _multiplicative_operator(){
 	bool result= false;
-	if(node_token_courant->Symbole_Courant.code==MULT_TOKEN || node_token_courant->Symbole_Courant.code=DIV_TOKEN || node_token_courant->Symbole_Courant.code=MOD_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==MULT_TOKEN || node_token_courant->Symbole_Courant.code==DIV_TOKEN || node_token_courant->Symbole_Courant.code==MOD_TOKEN){
         result=true;
 	}
 	return result;
@@ -915,7 +908,7 @@ bool _primary_expression(){
         if(node_token_courant->Symbole_Courant.code==CROCH_OUV_TOKEN){
             getNext();
             if(node_token_courant->Symbole_Courant.code==INUM_TOKEN){
-                SymbolSuivant()
+                SymbolSuivant() ;
                 if(node_token_courant->Symbole_Courant.code==CROCH_FER_TOKEN){
                     result=true;
                 }

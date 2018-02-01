@@ -6,6 +6,7 @@
 
 enum bool { false, true } ;
 typedef enum bool bool ;
+
 //*************************** fonction syntaxique **********************
  bool _start();
 bool _name_space();
@@ -204,5 +205,12 @@ typedef struct dlist
     struct node_token *p_tail;
     struct node_token *p_head;
 } Dlist;
+
+//*************************** Fonction mainLex *********************
+Dlist *dlist_new(void) ;
+Dlist *dlist_append(Dlist *p_list,Symbole symbole) ;
+void dlist_delete(Dlist **p_list) ;
+void getNext() ;
+void getBack() ;
 
 #endif
