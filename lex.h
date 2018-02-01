@@ -4,9 +4,10 @@
 
 
 
-
+enum bool { false, true } ;
+typedef enum bool bool ;
 //*************************** fonction syntaxique **********************
-bool _start();
+ bool _start();
 bool _name_space();
 bool _program();
 bool _name_space_implement();
@@ -64,18 +65,6 @@ bool _argument();
 bool _array_creation_expression();
 bool _array_length();
 bool _array_initializer();
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -146,7 +135,6 @@ POINT_VIRG_TOKEN ,// ;     __________
    STATIC_TOKEN,
    VOID_TOKEN,
    MAIN_TOKEN,
-   ARGS_TOKEN, //
    STRING_TOKEN, //
    PARAMS_TOKEN,
    INT_TOKEN,
@@ -202,6 +190,19 @@ struct Symbole{
 };
 typedef struct Symbole Symbole ;
 
+struct node_token
+{
+    Symbole Symbole_Courant ;
+    struct node_token *p_next;
+    struct node_token *p_prev;
+};
+typedef struct node_token node_token;
 
+typedef struct dlist
+{
+    int length;
+    struct node_token *p_tail;
+    struct node_token *p_head;
+} Dlist;
 
 #endif

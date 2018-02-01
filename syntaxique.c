@@ -3,11 +3,9 @@
 #include <ctype.h>
 #include <string.h>
 #include "lex.h"
-#include <stdbool.h>
+
 
 extern node_token* node_token_courant ;
-
-
 extern Symbole symboleCourant;
 
 //_________________________________START__________________________

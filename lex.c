@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "lex.h"
-#include <stdbool.h>
+
 
 
 
@@ -50,7 +50,7 @@ void SymbolSuivant(){
 
 //consommer les commentaires entre /* et */
 void PasserCommentaire(){
-	int i;
+	int i=1;
 if(caractereCourant=='/'){
 		LireCaractere();
 		if (caractereCourant=='*'){
@@ -360,14 +360,16 @@ void LireChaine() {
 			if(caractereCourant != '"'){
 					for(int j=0;j<test;j++){
 						 fseek(fichier,-sizeof(char),SEEK_CUR);	
-						 symboleCourant.nom[i-1-j]='\0' ;
+						// symboleCourant.nom[i-1-j]='\0' ;
 						 i=i-1 ;
+
 					}
 					symboleCourant.nom[i] = '\0';
 					symboleCourant.code = SYMBOLE_INCONNU_TOKEN;
 				    i++;
 				    //fseek(fichier,-sizeof(char),SEEK_CUR);	
 				    LireCaractere() ;
+
 
 			}
 		    
@@ -377,7 +379,7 @@ void LireChaine() {
 			    LireCaractere();
 			    i++;
 
-			    symboleCourant.nom[i+1] = '\0';
+			    symboleCourant.nom[i] = '\0';
 			    symboleCourant.code = CHAINE_TOKEN;
 			}
 	}
@@ -386,7 +388,6 @@ void LireChaine() {
 int CodageLex( char * nomSymbole ) {
 	
 	    if ( !strcmp(nomSymbole,"using")) return USING_TOKEN;
-	    if ( !strcmp(nomSymbole,"args")) return ARGS_TOKEN;
 	    if ( !strcmp(nomSymbole,"string")) return STRING_TOKEN;
 	    if ( !strcmp(nomSymbole,"System")) return SYSTEM_TOKEN;
 	    if ( !strcmp(nomSymbole,"namespace")) return NAMESPACE_TOKEN;

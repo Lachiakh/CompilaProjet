@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <stdbool.h>
+
 
 
 extern int caractereCourant ;
@@ -23,50 +23,42 @@ int main( int argc, char ** argv ) {
     LireCaractere();
     list=dlist_new() ;
     	while(symboleCourant.code!=FIN_TOKEN){
-    		    SymbolSuivant();        
+
+		SymbolSuivant(); 
+				                if(symboleCourant.code==FIN_TOKEN) break ;    		    
+		AfficherToken();       
                 dlist_append(list,symboleCourant) ;
-                if(symboleCourant.code==FIN_TOKEN) break ;
+
             }
         // AfficherToken();
-        node_token_courant=list->p_head ;
-        _start() ;
+       node_token_courant=list->p_head ;
+       _start() ;
 
-    for(int i=0;i<30;i++){
+  /*  for(int i=0;i<30;i++){
     if(node_token_courant!=NULL){
             printf(" #%d....yes we can...%s\n",node_token_courant->Symbole_Courant.code,node_token_courant->Symbole_Courant.nom) ;
             fflush(stdout);
             getNext() ;
     }
 }
+*/
     printf("****************************************************************************\n") ;
-   /*  getBack() ;
+     getBack() ;
     while(node_token_courant!=NULL){
             printf(" #%d....yes we can...%s\n",node_token_courant->Symbole_Courant.code,node_token_courant->Symbole_Courant.nom) ;
                         fflush(stdout);
             getBack() ;
     }
-    */
+	
+    
     
     FermerFichier();
-    void dlist_delete(list) ;
+    dlist_delete(list) ;
 
         printf("******************************Fin******************************* \n") ;
 
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
