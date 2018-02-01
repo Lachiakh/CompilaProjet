@@ -3,19 +3,23 @@
 #include <ctype.h>
 #include <string.h>
 #include "lex.h"
+#include <stdbool.h>
+
+extern node_token* node_token_courant ;
+
 
 extern Symbole symboleCourant;
 
-//---------------------------------START--------------------------
+//_________________________________START__________________________
 bool _start(){
 	bool result=false;
 	bool loop=true;
-	while(symboleCourant.code==USING_TOKEN && loop){
-		SymbolSuivant();
+	while(node_token_courant->Symbole_Courant.code==USING_TOKEN && loop){
+		getNext();
 		if(_name_space()){
-			SymbolSuivant();
-			if(symboleCourant.code==POINT_VIRG_TOKEN){
-				SymbolSuivant();
+			getNext();
+			if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
+				getNext();
 			}
 			else{
 				loop=false;
@@ -31,22 +35,22 @@ bool _start(){
 
 bool _name_space(){
 	bool result=false;
-	if(symboleCourant.code==SYSTEM_TOKEN) result=true;
+	if(node_token_courant->Symbole_Courant.code==SYSTEM_TOKEN) result=true;
 	return result;
 }
 
 bool _program(){
 	bool result=false;
-	if(symboleCourant.code==NAMESPACE_TOKEN){
-		SymbolSuivant();
-		if(symboleCourant.code==IDF_TOKEN){
-			SymbolSuivant();
-			if(symboleCourant.code==ACCOL_OUV_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==NAMESPACE_TOKEN){
+		getNext();
+		if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+			getNext();
+			if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
 				if(_name_space_implement()){
-					SymbolSuivant();
-					if(symboleCourant.code==ACCOL_FER_TOKEN){
-						SymbolSuivant();
-						if(symboleCourant.code==EOF_TOKEN){
+					getNext();
+					if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
+						getNext();
+						if(node_token_courant->Symbole_Courant.code==EOF_TOKEN){
 							result= true;
 						}
 					}
@@ -61,15 +65,15 @@ bool _program(){
 bool _name_space_implement(){
 	bool result=false;
 	if(_p_p()){
-		SymbolSuivant();
-		if(symboleCourant.code==CLASS_TOKEN){
-			SymbolSuivant();
-			if(symboleCourant.code==IDF_TOKEN){
-				SymbolSuivant();
-				if(symboleCourant.code==ACCOL_OUV_TOKEN){
+		getNext();
+		if(node_token_courant->Symbole_Courant.code==CLASS_TOKEN){
+			getNext();
+			if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+				getNext();
+				if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
 					if(_class_implement()){
-						SymbolSuivant();
-						if(symboleCourant.code==ACCOL_FER_TOKEN){
+						getNext();
+						if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
 							result= true;
 						}
 					}
@@ -82,7 +86,7 @@ bool _name_space_implement(){
 
 bool _p_p(){
 	bool result=false;
-	if(symboleCourant.code==PRIVATE_TOKEN || symboleCourant.code==PUBLIC_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==PRIVATE_TOKEN || node_token_courant->Symbole_Courant.code==PUBLIC_TOKEN){
 		result=true
 	}
 	return result;
@@ -92,26 +96,26 @@ bool _class_implement(){
 	bool result=false;
 	bool loop=true;
 	while(_methode_declaration()){
-		SymbolSuivant();
+		getNext();
 	}
-	if(_main_implement() || symboleCourant.code==ACCOL_FER_TOKEN) result=true; //Pas 100% ms ds plupart des cas usuels.
+	if(_main_implement() || node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN) result=true; //Pas 100% ms ds plupart des cas usuels.
 	return result;
 }
 
 bool _methode_declaration(){
 	bool result= false;
 	if(_p_p()){
-		SymbolSuivant();
-		if(symboleCourant.code==STATIC_TOKEN) SymbolSuivant();
+		getNext();
+		if(node_token_courant->Symbole_Courant.code==STATIC_TOKEN) getNext();
 		if(_return_type()){
-			SymbolSuivant();
+			getNext();
 			if(_methode_name()){
-				SymbolSuivant();
-				if(symboleCourant.code==PAR_OUV_TOKEN){
-					SymbolSuivant();
-					if(_formal_parameter_list()) SymbolSuivant(); //96%
-					if(symboleCourant.code==PAR_FER_TOKEN){
-						SymbolSuivant();
+				getNext();
+				if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+					getNext();
+					if(_formal_parameter_list()) getNext(); //96%
+					if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+						getNext();
 						result = _methode_body();
 					}
 				}
@@ -123,21 +127,21 @@ bool _methode_declaration(){
 
 bool _main_implement(){
 	bool result= false;
-	if(symboleCourant.code==PUBLIC_TOKEN) SymbolSuivant();
-	if(symboleCourant.code==STATIC_TOKEN){
-		SymbolSuivant();
-		if(symboleCourant.code==VOID_TOKEN){
-			SymbolSuivant();
-			if(symboleCourant.code==MAIN_TOKEN){
-				SymbolSuivant();
-				if(symboleCourant.code==PAR_OUV_TOKEN){
-					SymbolSuivant();
-					if(symboleCourant.code==STRING_TOKEN){
-						SymbolSuivant();
-						if(symboleCourant.code==IDF_TOKEN){
-							SymbolSuivant();
-							if(symboleCourant.code==PAR_FER_TOKEN){
-								SymbolSuivant();
+	if(node_token_courant->Symbole_Courant.code==PUBLIC_TOKEN) getNext();
+	if(node_token_courant->Symbole_Courant.code==STATIC_TOKEN){
+		getNext();
+		if(node_token_courant->Symbole_Courant.code==VOID_TOKEN){
+			getNext();
+			if(node_token_courant->Symbole_Courant.code==MAIN_TOKEN){
+				getNext();
+				if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+					getNext();
+					if(node_token_courant->Symbole_Courant.code==STRING_TOKEN){
+						getNext();
+						if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+							getNext();
+							if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+								getNext();
 								result = _methode_body();
 							}
 						}
@@ -151,7 +155,7 @@ bool _main_implement(){
 
 bool _return_type(){
 	bool result= false;
-	if(symboleCourant.code==VOID_TOKEN || _type()){
+	if(node_token_courant->Symbole_Courant.code==VOID_TOKEN || _type()){
 		result=true;
 	}
 	return result;
@@ -159,8 +163,8 @@ bool _return_type(){
 
 bool _methode_name(){
 	bool result= false;
-	if(symboleCourant.code==IDF_TOKEN){
-		symboleCourant.code= METH_IDF_TOKEN; //A verifier
+	if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+		node_token_courant->Symbole_Courant.code= METH_IDF_TOKEN; //A verifier
 		result=true;
 	}
 	return result;
@@ -169,30 +173,30 @@ bool _methode_name(){
 bool _formal_parameter_list{
 	bool result= false;
 	bool loop=true;
-	if(_fixed-parameters()){
-		SymbolSuivant();
-		while(symboleCourant.code==VIR_TOKEN && loop){
-			SymbolSuivant();
-			if(_parameter-array()){
-				SymbolSuivant();
+	if(_fixed_parameters()){
+		getNext();
+		while(node_token_courant->Symbole_Courant.code==VIR_TOKEN && loop){
+			getNext();
+			if(_parameter_array()){
+				getNext();
 			}
 			else loop=false;
 		}
 		if (loop) result=true;
 	}
-	else if(_parameter-array()) result=true;
+	else if(_parameter_array()) result=true;
 	return result;
 }
 
-bool _fixed-parameters(){
+bool _fixed_parameters(){
 	bool result= false;
 	bool loop=true;
-	if(_fixed-parameter()){
-		SymbolSuivant();
-		while(symboleCourant.code==VIR_TOKEN && loop){
-			SymbolSuivant();
-			if(_fixed-parameter()){
-				SymbolSuivant();
+	if(_fixed_parameter()){
+		getNext();
+		while(node_token_courant->Symbole_Courant.code==VIR_TOKEN && loop){
+			getNext();
+			if(_fixed_parameter()){
+				getNext();
 			}
 			else loop=false;
 		}
@@ -201,24 +205,24 @@ bool _fixed-parameters(){
 	return result;
 }
 
-bool _fixed-parameter(){
+bool _fixed_parameter(){
 	bool result= false;
 	if(_type()){
-		SymbolSuivant();
-		if(symboleCourant.code==IDF_TOKEN){
+		getNext();
+		if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
 			result=true;
 		}
 	}
 	return result;
 }
 
-bool _parameter-array(){
+bool _parameter_array(){
 	bool result= false;
-	if(symboleCourant.code==PARAMS_TOKEN){
-		SymbolSuivant();
-		if(_array-type()){
-			SymbolSuivant();
-			if(symboleCourant.code==IDF_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==PARAMS_TOKEN){
+		getNext();
+		if(_array_type()){
+			getNext();
+			if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
 				result=true;
 			}
 		}
@@ -228,81 +232,81 @@ bool _parameter-array(){
 
 bool _methode_body(){
 	bool result= false;
-	if(symboleCourant.code==POINT_VIRG_TOKEN) result=true;
+	if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN) result=true;
 	else result=_block();
 	return result;
 }
 
-//----------------------------------TYPE--------------------------
+//__________________________________TYPE__________________________
 bool _type(){
 	bool result= false;
-	if(_value-type()){
-		SymbolSuivant();
-		if(symboleCourant.code==CROCH_OUV_TOKEN){
-            SymbolSuivant();
-            if(symboleCourant.code==CROCH_FER_TOKEN){
+	if(_value_type()){
+		getNext();
+		if(node_token_courant->Symbole_Courant.code==CROCH_OUV_TOKEN){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==CROCH_FER_TOKEN){
                 result= true;
             }
 		}
 		else {
-            GetBack();
+            getBack();
             result=true;
 		}
 	}
 	return result;
 }
 
-bool _value-type(){
+bool _value_type(){
 	bool result= false;
-	if(symboleCourant.code==INT_TOKEN || symboleCourant.code==LONG_TOKEN || symboleCourant.code==CHAR_TOKEN || symboleCourant.code==FLOAT_TOKEN || symboleCourant.code==DOUBLE_TOKEN || symboleCourant.code==BOOL_TOKEN ){
+	if(node_token_courant->Symbole_Courant.code==INT_TOKEN || node_token_courant->Symbole_Courant.code==LONG_TOKEN || node_token_courant->Symbole_Courant.code==CHAR_TOKEN || node_token_courant->Symbole_Courant.code==FLOAT_TOKEN || node_token_courant->Symbole_Courant.code==DOUBLE_TOKEN || node_token_courant->Symbole_Courant.code==BOOL_TOKEN ){
         result=true;
 	}
 	return result;
 }
 
-bool _array-type(){
+bool _array_type(){
 	bool result= false;
-	if(_value-type()){
-        SymbolSuivant();
-        if(symboleCourant.code==CROCH_OUV_TOKEN){
-            SymbolSuivant();
-            if(symboleCourant.code==CROCH_FER_TOKEN){
+	if(_value_type()){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==CROCH_OUV_TOKEN){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==CROCH_FER_TOKEN){
                 result=true;
             }
         }
 	}
 	return result;
 }
-////----------------------------STATEMENT--------------------------
+////____________________________STATEMENT__________________________
 bool _block(){
 	bool result= false;
-	if(symboleCourant.code==ACCOL_OUV_TOKEN){
-        SymbolSuivant();
+	if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
+        getNext();
         bool loop=true;
         while(_statement()){
-            SymbolSuivant();
+            getNext();
         }
-        if(symboleCourant.code==ACCOL_FER_TOKEN) result=true; // Right in most cases
+        if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN) result=true; // Right in most cases
     }
 	return result;
 }
 
 bool _statement(){
 	bool result= false;
-	if(_declaration-statement() || _embedded-statement()){//96%
+	if(_declaration_statement() || _embedded_statement()){//96%
         result=true;
 	}
 	return result;
 }
 
-bool _embedded-statement(){
+bool _embedded_statement(){
 	bool result= false;
-    if(_block() || _selection-statement() || _iteration-statement() || _jump-statement() || _try-statement()){
+    if(_block() || _selection_statement() || _iteration_statement() || _jump_statement() || _try_statement()){
         result=true;
     }
-    else if(_print() || _statement-expression()){
-        SymbolSuivant();
-        if(symboleCourant.code==POINT_VIRG_TOKEN){
+    else if(_print() || _statement_expression()){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
             result=true;
         }
     }
@@ -313,32 +317,32 @@ bool _print(){
 	bool result= false;
 	bool already=false;
 	bool loop=true;
-    if(symboleCourant.code==SYSTEM_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==POINT_TOKEN){
-            SymbolSuivant();
+    if(node_token_courant->Symbole_Courant.code==SYSTEM_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==POINT_TOKEN){
+            getNext();
         }
         else {
                 already=true;;
         }
     }
     if(!already){
-        if(symboleCourant.code==CONSOLE_TOKEN){
-            SymbolSuivant();
-            if(symboleCourant.code==POINT_TOKEN){
-                SymbolSuivant();
-                if(symboleCourant.code==WRITELINE_TOKEN){
-                    SymbolSuivant();
-                    if(symboleCourant.code==PAR_OUV_TOKEN){
-                        SymbolSuivant();
+        if(node_token_courant->Symbole_Courant.code==CONSOLE_TOKEN){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==POINT_TOKEN){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==WRITELINE_TOKEN){
+                    getNext();
+                    if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+                        getNext();
                         while(_expression() && loop){
-                            SymbolSuivant();
-                            if(symboleCourant.code==PAR_FER_TOKEN){
+                            getNext();
+                            if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
                                 result=true;
                                 loop=false;
                             }
-                            else if(symboleCourant.code==PLUS_TOKEN){
-                                SymbolSuivant();
+                            else if(node_token_courant->Symbole_Courant.code==PLUS_TOKEN){
+                                getNext();
                             }
                         }
                     }
@@ -349,37 +353,37 @@ bool _print(){
 	return result;
 }
 
-bool _declaration-statement(){
+bool _declaration_statement(){
 	bool result= false;
-    if(_local-variable-declaration() || _ local-constant-declaration()){
-        SymbolSuivant();
-        if(symboleCourant.code==POINT_VIRG_TOKEN){
+    if(_local_variable_declaration() || _ local_constant_declaration()){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
             result=true;
         }
     }
 	return result;
 }
 
-bool _local-variable-declaration(){
+bool _local_variable_declaration(){
 	bool result= false;
 	if(_type()){
-        SymbolSuivant();
-        if(_variable-declarator()){
-            SymbolSuivant();
+        getNext();
+        if(_variable_declarator()){
+            getNext();
             bool loop=true;
-            while(symboleCourant.code==VIR_TOKEN && loop){
-                SymbolSuivant();
-                if(_variable-declarator()){
-                    SymbolSuivant();
+            while(node_token_courant->Symbole_Courant.code==VIR_TOKEN && loop){
+                getNext();
+                if(_variable_declarator()){
+                    getNext();
                 }
                 else{
                     loop=false;
                 }
             }
             if(loop) {
-                if(symboleCourant.code==POINT_VIRG_TOKEN){
+                if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
                     result=true;
-                    GetBack();
+                    getBack();
                 }
             }
         }
@@ -387,29 +391,29 @@ bool _local-variable-declaration(){
 	return result;
 }
 
-bool _variable-declarator(){
+bool _variable_declarator(){
 	bool result= false;
-	if(symboleCourant.code==IDF_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==VIR_TOKEN || symboleCourant.code==POINT_VIRG_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==VIR_TOKEN || node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
             result=true;
-            GetBack();
+            getBack();
         }
-        else if(symboleCourant.code==EGALE_TOKEN){
+        else if(node_token_courant->Symbole_Courant.code==EGALE_TOKEN){
             bool loop=true;
-            while(symboleCourant.code==EGALE_TOKEN && loop){
-                SymbolSuivant();
-                if(_variable-initializer()){
-                    SymbolSuivant();
+            while(node_token_courant->Symbole_Courant.code==EGALE_TOKEN && loop){
+                getNext();
+                if(_variable_initializer()){
+                    getNext();
                 }
                 else{
                     loop=false;
                 }
             }
             if(loop) {
-                if(symboleCourant.code==VIR_TOKEN || symboleCourant.code==POINT_VIRG_TOKEN){
+                if(node_token_courant->Symbole_Courant.code==VIR_TOKEN || node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
                     result=true;
-                    GetBack();
+                    getBack();
                 }
             }
         }
@@ -417,33 +421,33 @@ bool _variable-declarator(){
 	return result;
 }
 
-bool _variable-initializer(){
+bool _variable_initializer(){
 	bool result= _expression();
 	return result;
 }
 
-bool _local-constant-declaration(){
+bool _local_constant_declaration(){
 	bool result= false;
-    if(symboleCourant.code==CONST_TOKEN){
-        SymbolSuivant();
+    if(node_token_courant->Symbole_Courant.code==CONST_TOKEN){
+        getNext();
         if(_type()){
-            SymbolSuivant();
-            if(_constant-declarator()){
-                SymbolSuivant();
+            getNext();
+            if(_constant_declarator()){
+                getNext();
                 bool loop=true;
-                while(symboleCourant.code==VIR_TOKEN && loop){
-                    SymbolSuivant();
-                    if(_constant-declarator()){
-                        SymbolSuivant();
+                while(node_token_courant->Symbole_Courant.code==VIR_TOKEN && loop){
+                    getNext();
+                    if(_constant_declarator()){
+                        getNext();
                     }
                     else{
                         loop=false;
                     }
                 }
                 if(loop) {
-                    if(symboleCourant.code==POINT_VIRG_TOKEN){
+                    if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
                         result=true;
-                        GetBack();
+                        getBack();
                     }
                 }
             }
@@ -452,12 +456,12 @@ bool _local-constant-declaration(){
 	return result;
 }
 
-bool _constant-declarator(){
+bool _constant_declarator(){
 	bool result= false;
-	if(symboleCourant.code==IDF_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==EGALE_TOKEN){
-            SymbolSuivant();
+	if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==EGALE_TOKEN){
+            getNext();
             if(_expression()){
                 result=true;
             }
@@ -466,54 +470,54 @@ bool _constant-declarator(){
 	return result;
 }
 
-bool _statement-expression(){
+bool _statement_expression(){
 	bool result= false;
-    if(_invocation-expression() || _assignment()){
+    if(_invocation_expression() || _assignment()){
         result=true;
     }
 	return result;
 }
 
-bool _selection-statement(){
+bool _selection_statement(){
 	bool result= false;
-    if(symboleCourant.code==IF_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==PAR_OUV_TOKEN){
-            SymbolSuivant();
-            if(_ boolean-expression()){
-                SymbolSuivant();
-                if(symboleCourant.code==PAR_FER_TOKEN){
-                    SymbolSuivant();
-                    if(_embedded-statement()){
+    if(node_token_courant->Symbole_Courant.code==IF_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+            getNext();
+            if(_ boolean_expression()){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+                    getNext();
+                    if(_embedded_statement()){
                         result=true;
-                        SymbolSuivant();
-                        if(symboleCourant.code==ELSE_TOKEN){
-                            SymbolSuivant();
-                            if(!_embedded-statement()){
+                        getNext();
+                        if(node_token_courant->Symbole_Courant.code==ELSE_TOKEN){
+                            getNext();
+                            if(!_embedded_statement()){
                                 result=false;
                             }
                         }
-                        else GetBack();
+                        else getBack();
                     }
                 }
             }
         }
     }
-    else if(symboleCourant.code==SWITCH_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==PAR_OUV_TOKEN){
-            SymbolSuivant();
-            if(symboleCourant.code==IDF_TOKEN){
-                SymbolSuivant();
-                if(symboleCourant.code==PAR_FER_TOKEN){
-                    SymbolSuivant();
-                    if(symboleCourant.code==ACCOL_OUV_TOKEN){
-                        SymbolSuivant();
+    else if(node_token_courant->Symbole_Courant.code==SWITCH_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+                    getNext();
+                    if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
+                        getNext();
                         bool loop=true;
-                        while(_switch-section()){
-                            SymbolSuivant();
+                        while(_switch_section()){
+                            getNext();
                         }
-                        if(symboleCourant.code==ACCOL_FER_TOKEN) result=true;
+                        if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN) result=true;
                     }
                 }
             }
@@ -522,76 +526,76 @@ bool _selection-statement(){
 	return result;
 }
 
-bool _switch-section(){
+bool _switch_section(){
 	bool result= false;
-    while(_switch-label()){
-        SymbolSuivant();
+    while(_switch_label()){
+        getNext();
     }
     while(_statement()){
-        SymbolSuivant();
+        getNext();
     }
-    if(symboleCourant.code==BREAK_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==POINT_VIRG_TOKEN){
+    if(node_token_courant->Symbole_Courant.code==BREAK_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
             result=true;
         }
     }
-    else if(symboleCourant.code==ACCOL_FER_TOKEN){
+    else if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
         result=true;
-        GetBack();
+        getBack();
     }
 	return result;
 }
 
-bool _switch-label(){
+bool _switch_label(){
 	bool result= false;
-	if(symboleCourant.code==CASE_TOKEN){
-        SymbolSuivant();
+	if(node_token_courant->Symbole_Courant.code==CASE_TOKEN){
+        getNext();
         if(_expression()){
-            SymbolSuivant();
-            if(symboleCourant.code==deux_POINT_TOKEN){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==deux_POINT_TOKEN){
                 result=true;
             }
         }
 	}
-	else if(symboleCourant.code==DEFAULT_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==deux_POINT_TOKEN){
+	else if(node_token_courant->Symbole_Courant.code==DEFAULT_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==deux_POINT_TOKEN){
             result=true;
         }
 	}
 	return result;
 }
 
-bool _iteration-statement(){
+bool _iteration_statement(){
 	bool result= false;
-    if(symboleCourant.code==WHILE_TOKEN){
-        if(symboleCourant.code==PAR_OUV_TOKEN){
-            SymbolSuivant();
-            if(_ boolean-expression()){
-                SymbolSuivant();
-                if(symboleCourant.code==PAR_FER_TOKEN){
-                    SymbolSuivant();
-                    if(_embedded-statement()){
+    if(node_token_courant->Symbole_Courant.code==WHILE_TOKEN){
+        if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+            getNext();
+            if(_ boolean_expression()){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+                    getNext();
+                    if(_embedded_statement()){
                         result=true;
                     }
                 }
             }
         }
     }
-    else if(symboleCourant.code==DO_TOKEN){
-        SymbolSuivant();
-        if(_embedded-statement()){
-            SymbolSuivant();
-            if(symboleCourant.code==WHILE_TOKEN){
-                SymbolSuivant();
-                if(symboleCourant.code==PAR_OUV_TOKEN){
-                    SymbolSuivant();
-                    if(_ boolean-expression()){
-                        SymbolSuivant();
-                        if(symboleCourant.code==PAR_FER_TOKEN){
-                            SymbolSuivant();
-                            if(symboleCourant.code==POINT_VIRG_TOKEN){
+    else if(node_token_courant->Symbole_Courant.code==DO_TOKEN){
+        getNext();
+        if(_embedded_statement()){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==WHILE_TOKEN){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+                    getNext();
+                    if(_ boolean_expression()){
+                        getNext();
+                        if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+                            getNext();
+                            if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
                                 result=true;
                             }
                         }
@@ -600,23 +604,23 @@ bool _iteration-statement(){
             }
         }
     }
-    else if(symboleCourant.code==FOR_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==PAR_OUV_TOKEN){
-            SymbolSuivant();
-            if(_for-initializer()){
-                SymbolSuivant();
-                if(symboleCourant.code==POINT_VIRG_TOKEN){
-                    SymbolSuivant();
-                    if(_boolean-expression()){
-                        SymbolSuivant();
-                        if(symboleCourant.code==POINT_VIRG_TOKEN){
-                            SymbolSuivant();
-                            if(_for-iterator()){
-                                SymbolSuivant();
-                                if(symboleCourant.code==PAR_FER_TOKEN){
-                                    SymbolSuivant();
-                                    if(_embedded-statement()){
+    else if(node_token_courant->Symbole_Courant.code==FOR_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+            getNext();
+            if(_for_initializer()){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
+                    getNext();
+                    if(_boolean_expression()){
+                        getNext();
+                        if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
+                            getNext();
+                            if(_for_iterator()){
+                                getNext();
+                                if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+                                    getNext();
+                                    if(_embedded_statement()){
                                         result=true;
                                     }
                                 }
@@ -627,21 +631,21 @@ bool _iteration-statement(){
             }
         }
     }
-    else if(symboleCourant.code==FOREACH_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==PAR_OUV_TOKEN){
-            SymbolSuivant();
+    else if(node_token_courant->Symbole_Courant.code==FOREACH_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+            getNext();
             if(_type()){
-                SymbolSuivant();
-                if(symboleCourant.code==IDF_TOKEN){
-                    SymbolSuivant();
-                    if(symboleCourant.code==IN_TOKEN){
-                        SymbolSuivant();
-                        if(symboleCourant.code==IDF_TOKEN){
-                            SymbolSuivant();
-                            if(symboleCourant.code==PAR_FER_TOKEN){
-                                SymbolSuivant();
-                                if(_embedded-statement()){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+                    getNext();
+                    if(node_token_courant->Symbole_Courant.code==IN_TOKEN){
+                        getNext();
+                        if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+                            getNext();
+                            if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+                                getNext();
+                                if(_embedded_statement()){
                                     result=true;
                                 }
                             }
@@ -654,67 +658,67 @@ bool _iteration-statement(){
 	return result;
 }
 
-bool _for-initializer(){
+bool _for_initializer(){
 	bool result= false;
-    if(_local-variable-declaration() || _assignment()){
+    if(_local_variable_declaration() || _assignment()){
         result=true;
     }
 	return result;
 }
 
-bool _for-iterator(){
-	bool result= _statement-expression();
+bool _for_iterator(){
+	bool result= _statement_expression();
 	return result;
 }
 
-bool _jump-statement(){
+bool _jump_statement(){
 	bool result= false;
-    if(symboleCourant.code==BREAK_TOKEN || symboleCourant.code==CONTINUE_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==POINT_VIRG_TOKEN){
+    if(node_token_courant->Symbole_Courant.code==BREAK_TOKEN || node_token_courant->Symbole_Courant.code==CONTINUE_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
             result=true;
         }
     }
-    else if(symboleCourant.code==RETURN_TOKEN){
-        SymbolSuivant();
-        if(_expression()) SymbolSuivant();
-        if(symboleCourant.code==POINT_VIRG_TOKEN){
+    else if(node_token_courant->Symbole_Courant.code==RETURN_TOKEN){
+        getNext();
+        if(_expression()) getNext();
+        if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
             result=true;
         }
     }
 	return result;
 }
 
-bool _boolean-expression(){
+bool _boolean_expression(){
 	bool result= _expression();
 	return result;
 }
 
-////----------------------------EXPRESSION--------------------------
+////____________________________EXPRESSION__________________________
 bool _assignment(){
 	bool result= false;
-	if(symboleCourant.code==IDF_TOKEN){
-        SymbolSuivant();
-        if(_assignment-body()){
+	if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+        getNext();
+        if(_assignment_body()){
             result=true;
         }
 	}
 	return result;
 }
 
-bool _assignment-body(){
+bool _assignment_body(){
 	bool result= false;
-	if(symboleCourant.code==PLUS_PLUS_TOKEN || symboleCourant.code==MOINS_MOINS_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==PLUS_PLUS_TOKEN || node_token_courant->Symbole_Courant.code==MOINS_MOINS_TOKEN){
         result=true;
 	}
 	else if(_assignment_operator()){
-        SymbolSuivant();
-        if(symboleCourant.code==PAR_OUV_TOKEN){
-            SymbolSuivant();
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+            getNext();
             if(_type()){
-                SymbolSuivant();
-                if(symboleCourant.code==PAR_FER_TOKEN){
-                    SymbolSuivant();
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+                    getNext();
                     if(_expression()){
                         result=true;
                     }
@@ -727,26 +731,26 @@ bool _assignment-body(){
 
 bool _assignment_operator(){
 	bool result= false;
-    if(symboleCourant.code==EGALE_TOKEN || symboleCourant.code==PLUS_EGALE_TOKEN || symboleCourant.code==MOINS_EGALE_TOKEN || symboleCourant.code==MULT_EGALE_TOKEN || symboleCourant.code==DIV_EGALE_TOKEN || symboleCourant.code==MOD_EGALE_TOKEN || symboleCourant.code==PUISS_EGALE_TOKEN){
+    if(node_token_courant->Symbole_Courant.code==EGALE_TOKEN || node_token_courant->Symbole_Courant.code==PLUS_EGALE_TOKEN || node_token_courant->Symbole_Courant.code==MOINS_EGALE_TOKEN || node_token_courant->Symbole_Courant.code==MULT_EGALE_TOKEN || node_token_courant->Symbole_Courant.code==DIV_EGALE_TOKEN || node_token_courant->Symbole_Courant.code==MOD_EGALE_TOKEN || node_token_courant->Symbole_Courant.code==PUISS_EGALE_TOKEN){
         result=true;
     }
 	return result;
 }
 
 bool _expression(){
-	bool result= _conditional-or-expression();
+	bool result= _conditional_or_expression();
 	return result;
 }
 
-bool _conditional-or-expression(){
+bool _conditional_or_expression(){
 	bool result= false;
 	bool already=false;
-    if(_conditional-and-expression()){
-        SymbolSuivant();
-        while(symboleCourant.code==OU_TOKEN && !already){
-            SymbolSuivant();
-            if(_conditional-and-expression()){
-                SymbolSuivant();
+    if(_conditional_and_expression()){
+        getNext();
+        while(node_token_courant->Symbole_Courant.code==OU_TOKEN && !already){
+            getNext();
+            if(_conditional_and_expression()){
+                getNext();
             }
             else{
                 already=true;
@@ -754,21 +758,21 @@ bool _conditional-or-expression(){
         }
         if(!already){
             result=true;
-            GetBack();
+            getBack();
         }
     }
 	return result;
 }
 
-bool _conditional-and-expression(){
+bool _conditional_and_expression(){
 	bool result= false;
 	bool already=false;
-    if(_inclusive-or-expression()){
-        SymbolSuivant();
-        while(symboleCourant.code==ET_TOKEN && !already){
-            SymbolSuivant();
-            if(_inclusive-or-expression()){
-                SymbolSuivant();
+    if(_inclusive_or_expression()){
+        getNext();
+        while(node_token_courant->Symbole_Courant.code==ET_TOKEN && !already){
+            getNext();
+            if(_inclusive_or_expression()){
+                getNext();
             }
             else{
                 already=true;
@@ -776,21 +780,21 @@ bool _conditional-and-expression(){
         }
         if(!already){
             result=true;
-            GetBack();
+            getBack();
         }
     }
 	return result;
 }
 
-bool _inclusive-or-expression(){
+bool _inclusive_or_expression(){
 	bool result= false;
 	bool already=false;
-    if(_relational-expression()){
-        SymbolSuivant();
+    if(_relational_expression()){
+        getNext();
         while(_equality_operator() && !already){
-            SymbolSuivant();
-            if(_relational-expression()){
-                SymbolSuivant();
+            getNext();
+            if(_relational_expression()){
+                getNext();
             }
             else{
                 already=true;
@@ -798,7 +802,7 @@ bool _inclusive-or-expression(){
         }
         if(!already){
             result=true;
-            GetBack();
+            getBack();
         }
     }
 	return result;
@@ -806,21 +810,21 @@ bool _inclusive-or-expression(){
 
 bool _equality_operator(){
 	bool result= false;
-	if(symboleCourant.code==EGALE_EGALE_TOKEN || symboleCourant.code=DIFF_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==EGALE_EGALE_TOKEN || node_token_courant->Symbole_Courant.code=DIFF_TOKEN){
         result=true;
 	}
 	return result;
 }
 
-bool _relational-expression(){
+bool _relational_expression(){
 	bool result= false;
 	bool already=false;
-    if(_additive-expression()){
-        SymbolSuivant();
+    if(_additive_expression()){
+        getNext();
         while(_relational_operator() && !already){
-            SymbolSuivant();
-            if(_additive-expression()){
-                SymbolSuivant();
+            getNext();
+            if(_additive_expression()){
+                getNext();
             }
             else{
                 already=true;
@@ -828,7 +832,7 @@ bool _relational-expression(){
         }
         if(!already){
             result=true;
-            GetBack();
+            getBack();
         }
     }
 	return result;
@@ -836,22 +840,22 @@ bool _relational-expression(){
 
 bool _relational_operator(){
 	bool result= false;
-    if(symboleCourant.code==INF_TOKEN || symboleCourant.code=INF_EGALE_TOKEN || symboleCourant.code=SUP_TOKEN || symboleCourant.code=SUP_EGALE_TOKEN){
+    if(node_token_courant->Symbole_Courant.code==INF_TOKEN || node_token_courant->Symbole_Courant.code=INF_EGALE_TOKEN || node_token_courant->Symbole_Courant.code=SUP_TOKEN || node_token_courant->Symbole_Courant.code=SUP_EGALE_TOKEN){
         result=true;
 	}
 	return result;
 }
 
-bool _additive-expression(){
+bool _additive_expression(){
 	bool result= false;
 	bool result= false;
 	bool already=false;
-    if(_multiplicative-expression()){
-        SymbolSuivant();
+    if(_multiplicative_expression()){
+        getNext();
         while(_additive_operator() && !already){
-            SymbolSuivant();
-            if(_multiplicative-expression()){
-                SymbolSuivant();
+            getNext();
+            if(_multiplicative_expression()){
+                getNext();
             }
             else{
                 already=true;
@@ -859,7 +863,7 @@ bool _additive-expression(){
         }
         if(!already){
             result=true;
-            GetBack();
+            getBack();
         }
     }
 	return result;
@@ -868,22 +872,22 @@ bool _additive-expression(){
 
 bool _additive_operator(){
 	bool result= false;
-	if(symboleCourant.code==PLUS_TOKEN || symboleCourant.code=MOINS_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==PLUS_TOKEN || node_token_courant->Symbole_Courant.code=MOINS_TOKEN){
         result=true;
 	}
 	return result;
 }
 
-bool _multiplicative-expression(){
+bool _multiplicative_expression(){
 	bool result= false;
 	bool result= false;
 	bool already=false;
-    if(_unary-expression()){
-        SymbolSuivant();
+    if(_unary_expression()){
+        getNext();
         while(_multiplicative_operator() && !already){
-            SymbolSuivant();
-            if(_unary-expression()){
-                SymbolSuivant();
+            getNext();
+            if(_unary_expression()){
+                getNext();
             }
             else{
                 already=true;
@@ -891,7 +895,7 @@ bool _multiplicative-expression(){
         }
         if(!already){
             result=true;
-            GetBack();
+            getBack();
         }
     }
 	return result;
@@ -900,63 +904,63 @@ bool _multiplicative-expression(){
 
 bool _multiplicative_operator(){
 	bool result= false;
-	if(symboleCourant.code==MULT_TOKEN || symboleCourant.code=DIV_TOKEN || symboleCourant.code=MOD_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==MULT_TOKEN || node_token_courant->Symbole_Courant.code=DIV_TOKEN || node_token_courant->Symbole_Courant.code=MOD_TOKEN){
         result=true;
 	}
 	return result;
 }
 
-bool _primary-expression(){
+bool _primary_expression(){
 	bool result= false;
-    if(symboleCourant.code==IDF_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==CROCH_OUV_TOKEN){
-            SymbolSuivant();
-            if(symboleCourant.code==INUM_TOKEN){
+    if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==CROCH_OUV_TOKEN){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==INUM_TOKEN){
                 SymbolSuivant()
-                if(symboleCourant.code==CROCH_FER_TOKEN){
+                if(node_token_courant->Symbole_Courant.code==CROCH_FER_TOKEN){
                     result=true;
                 }
             }
         }
         else{
             result=true;
-            GetBack();
+            getBack();
         }
     }
-    else if(symboleCourant.code==PAR_OUV_TOKEN){
-        SymbolSuivant();
-        if(_conditional-or-expression()){
-            SymbolSuivant();
-            if(symboleCourant.code==PAR_FER_TOKEN){
+    else if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+        getNext();
+        if(_conditional_or_expression()){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
                 result=true;
             }
         }
     }
-    else if(_invocation-expression()){
+    else if(_invocation_expression()){
         result=true;
     }
-    else if(symboleCourant.code==INUM_TOKEN || symboleCourant.code==FNUM_TOKEN || symboleCourant.code==TRUE_TOKEN || symboleCourant.code==FALSE_TOKEN || symboleCourant.code==CHAINE_TOKEN || symboleCourant.code==CHARACTER_TOKEN){
+    else if(node_token_courant->Symbole_Courant.code==INUM_TOKEN || node_token_courant->Symbole_Courant.code==FNUM_TOKEN || node_token_courant->Symbole_Courant.code==TRUE_TOKEN || node_token_courant->Symbole_Courant.code==FALSE_TOKEN || node_token_courant->Symbole_Courant.code==CHAINE_TOKEN || node_token_courant->Symbole_Courant.code==CHARACTER_TOKEN){
         result=true;
     }
-    else if(_array-creation-expression()){
+    else if(_array_creation_expression()){
         result=true;
     }
 	return result;
 }
 
-bool _invocation-expression(){
+bool _invocation_expression(){
 	bool result= false;
-	if(symboleCourant.code==METH_IDF_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==PAR_OUV_TOKEN){
-            SymbolSuivant();
-            if(symboleCourant.code==PAR_FER_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==METH_IDF_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
                 result=true;
             }
-            else if(_argument-list()){
-                SymbolSuivant();
-                if(symboleCourant.code==PAR_FER_TOKEN){
+            else if(_argument_list()){
+                getNext();
+                if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
                     result=true;
                 }
             }
@@ -965,14 +969,14 @@ bool _invocation-expression(){
 	return result;
 }
 
-bool _argument-list(){
+bool _argument_list(){
 	bool result= false;
     if(_argument()){
         bool loop=true;
-        while(symboleCourant.code==VIR_TOKEN && loop){
-            SymbolSuivant();
+        while(node_token_courant->Symbole_Courant.code==VIR_TOKEN && loop){
+            getNext();
             if(_argument()){
-                SymbolSuivant();
+                getNext();
             }
             else{
                 loop=false;
@@ -980,7 +984,7 @@ bool _argument-list(){
         }
         if(loop) {
             result=true;
-            GetBack();
+            getBack();
         }
     }
 	return result;
@@ -991,22 +995,22 @@ bool _argument(){
 	return result;
 }
 
-bool _array-creation-expression(){
+bool _array_creation_expression(){
 	bool result= false;
-	if(symboleCourant.code==NEW_TOKEN){
-        SymbolSuivant();
-        if(_value-type()){
-            SymbolSuivant();
-            if(symboleCourant.code==CROCH_OUV_TOKEN){
-                SymbolSuivant();
-                if(_array-length()){
-                    SymbolSuivant();
-                    if(_array-initializer()){
+	if(node_token_courant->Symbole_Courant.code==NEW_TOKEN){
+        getNext();
+        if(_value_type()){
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==CROCH_OUV_TOKEN){
+                getNext();
+                if(_array_length()){
+                    getNext();
+                    if(_array_initializer()){
                         result=true;
                     }
                     else{
                         result=true;
-                        GetBack();
+                        getBack();
                     }
                 }
             }
@@ -1015,43 +1019,43 @@ bool _array-creation-expression(){
 	return result;
 }
 
-bool _array-length(){
+bool _array_length(){
 	bool result= false;
-	if(symboleCourant.code==INUM_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==CROCH_FER_TOKEN){
+	if(node_token_courant->Symbole_Courant.code==INUM_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==CROCH_FER_TOKEN){
             result=true;
         }
 	}
-	else if(symboleCourant.code==CROCH_FER_TOKEN){
+	else if(node_token_courant->Symbole_Courant.code==CROCH_FER_TOKEN){
         result=true;
     }
 	return result;
 }
 
-bool _array-initializer(){
+bool _array_initializer(){
 	bool result= false;
-    if(symboleCourant.code==ACCOL_OUV_TOKEN){
-        SymbolSuivant();
-        if(symboleCourant.code==ACCOL_FER_TOKEN){
+    if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
+        getNext();
+        if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
             result=true;
         }
         else if(_expression()){
-            SymbolSuivant();
-            if(symboleCourant.code==VIR_TOKEN){
-                SymbolSuivant();
+            getNext();
+            if(node_token_courant->Symbole_Courant.code==VIR_TOKEN){
+                getNext();
                 while(_expression()){
-                    SymbolSuivant();
-                    if(symboleCourant.code==VIR_TOKEN){
-                        SymbolSuivant();
+                    getNext();
+                    if(node_token_courant->Symbole_Courant.code==VIR_TOKEN){
+                        getNext();
                     }
-                    else if(symboleCourant.code==ACCOL_FER_TOKEN){
+                    else if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
                         result=true;
                         break;
                     }
                 }
             }
-            else if(symboleCourant.code==ACCOL_FER_TOKEN){
+            else if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
                 result=true;
             }
         }
