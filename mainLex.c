@@ -6,8 +6,12 @@
 
 
 
-extern int caractereCourant ;
-extern Symbole symboleCourant;
+//char caractereCourant ; //CHANGED INT TO CHAR & REMOVED EXTERN
+//Symbole symboleCourant;// REMOVED EXTERN
+
+
+Dlist *list = NULL; /* Déclaration d'une liste vide */
+//node_token *node_token_courant ;
 
 
 Dlist *list = NULL; /* Déclaration d'une liste vide */
@@ -15,46 +19,46 @@ node_token *node_token_courant ;
 
 
 int main( int argc, char ** argv ) {
-    OuvrirFichier("source.txt");
-    LireCaractere();
-    list=dlist_new() ;
-    	while(symboleCourant.code!=FIN_TOKEN){
-
+	OuvrirFichier("source.txt");
+	LireCaractere();
+	list=dlist_new() ;
+	while(symboleCourant.code!=FIN_TOKEN){
 		SymbolSuivant(); 
-				                if(symboleCourant.code==FIN_TOKEN) break ;    		    
 		AfficherToken();       
-                dlist_append(list,symboleCourant) ;
+		dlist_append(list,symboleCourant) ;
+		if(symboleCourant.code==FIN_TOKEN) break ; //BRING IT HERE TO THE BOTTOM   		    
+	}
+	// AfficherToken();
+	node_token_courant=list->p_head ;
+	bool result_analyse_syntaxique=_starting() ;
+        printf("RESULTAT DE L'ANALYSE SYNTAXIQUE: %d", result_analyse_syntaxique);
 
+       /*
+       for(int i=0;i<30;i++){
+            if(node_token_courant!=NULL){
+                printf(" #%d....yes we can...%s\n",node_token_courant->Symbole_Courant.code,node_token_courant->Symbole_Courant.nom) ;
+                fflush(stdout);
+                getNext() ;
             }
-        // AfficherToken();
-       node_token_courant=list->p_head ;
-       _start() ;
-
-  /*  for(int i=0;i<30;i++){
-    if(node_token_courant!=NULL){
-            printf(" #%d....yes we can...%s\n",node_token_courant->Symbole_Courant.code,node_token_courant->Symbole_Courant.nom) ;
-            fflush(stdout);
-            getNext() ;
-    }
-}
-*/
-    printf("****************************************************************************\n") ;
-     getBack() ;
-    while(node_token_courant!=NULL){
+       }
+       */
+       
+       printf("****************************************************************************\n") ;
+       getBack() ;
+       while(node_token_courant!=NULL){
             printf(" #%d....yes we can...%s\n",node_token_courant->Symbole_Courant.code,node_token_courant->Symbole_Courant.nom) ;
                         fflush(stdout);
             getBack() ;
-    }
+       }
 	
-    
-    
-    FermerFichier();
-    dlist_delete(list) ;
+       FermerFichier();
+       dlist_delete(&list) ;// ADDED &
 
-        printf("******************************Fin******************************* \n") ;
+       printf("******************************Fin******************************* \n") ;
 
-    return 0;
+       return 0;
 }
+
 
 
 

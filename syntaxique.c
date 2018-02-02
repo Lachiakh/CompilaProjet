@@ -5,18 +5,21 @@
 #include "lex.h"
 
 
-extern node_token* node_token_courant ;
-extern Symbole symboleCourant;
-extern Dlist *list ;
+//extern node_token* node_token_courant ;
+//extern Dlist *list ;
 //_________________________________START__________________________
-bool _start(){
+bool _starting(){
+        printf("CHECKING _starting()  \n");
 	bool result=false;
 	bool loop=true;
 	while(node_token_courant->Symbole_Courant.code==USING_TOKEN && loop){
+		printf("using -------- TIME TO CHECK _namespace()  \n");
 		getNext();
 		if(_name_space()){
+			printf("_namespace() -------- TIME TO CHECK ;  \n");
 			getNext();
 			if(node_token_courant->Symbole_Courant.code==POINT_VIRG_TOKEN){
+				printf("; --------  \n");
 				getNext();
 			}
 			else{
@@ -27,28 +30,42 @@ bool _start(){
 			loop=false;
 		}
 	}
-	if(loop) result=_program();
+	if(loop) {
+		printf("Good -------- TIME TO CHECK _program()  \n");
+		result=_program();
+	}
 	return result;
 }
 
 bool _name_space(){
+        printf("Checking _name_space()  \n");
 	bool result=false;
-	if(node_token_courant->Symbole_Courant.code==SYSTEM_TOKEN) result=true;
+	if(node_token_courant->Symbole_Courant.code==SYSTEM_TOKEN) {
+		printf("_namespace() --------  \n");
+		result=true;
+	}
 	return result;
 }
 
 bool _program(){
+	printf("CHECKING _program()  \n");
 	bool result=false;
 	if(node_token_courant->Symbole_Courant.code==NAMESPACE_TOKEN){
+		printf("namespace -------- TIME TO CHECK IDF_TOKEN  \n");
 		getNext();
 		if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+			printf("IDF_TOKEN -------- TIME TO CHECK {  \n");
 			getNext();
 			if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
+				printf("{ -------- TIME TO CHECK _name_space_implement()  \n");
 				if(_name_space_implement()){
 					getNext();
+					printf(" _name_space_implement()-------- TIME TO CHECK }  \n");
 					if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
 						getNext();
+						printf("}-------- TIME TO CHECK FIN_TOKEN  \n");
 						if(node_token_courant->Symbole_Courant.code==FIN_TOKEN){
+							printf("FIN_TOKEN ------- COOOL  \n");
 							result= true;
 						}
 					}
@@ -56,22 +73,32 @@ bool _program(){
 			}
 		}
 	}
-	else result= _name_space_implement();
+	else {
+		result= _name_space_implement();
+		printf("-------- TIME TO CHECK  _name_space_implement()  \n");	
+	}
 	return result;
 }
 
 bool _name_space_implement(){
+	printf("CHECKING _name_space_implement()  \n");
 	bool result=false;
 	if(_p_p()){
+		printf("_p_p()-------- TIME TO CHECK  CLASS_TOKEN  \n");
 		getNext();
 		if(node_token_courant->Symbole_Courant.code==CLASS_TOKEN){
+			printf("CLASS_TOKEN-------- TIME TO CHECK  IDF_TOKEN  \n");
 			getNext();
 			if(node_token_courant->Symbole_Courant.code==IDF_TOKEN){
+				printf("IDF_TOKEN-------- TIME TO CHECK  {  \n");
 				getNext();
 				if(node_token_courant->Symbole_Courant.code==ACCOL_OUV_TOKEN){
+					printf("{-------- TIME TO CHECK  _name_space_implement()  \n");
 					if(_class_implement()){
+						printf("_class_implement()-------- TIME TO CHECK  }  \n");
 						getNext();
 						if(node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN){
+							printf("} --------  \n");
 							result= true;
 						}
 					}
@@ -83,35 +110,48 @@ bool _name_space_implement(){
 }
 
 bool _p_p(){
+	printf("CHECKING _p_p()  \n");
 	bool result=false;
 	if(node_token_courant->Symbole_Courant.code==PRIVATE_TOKEN || node_token_courant->Symbole_Courant.code==PUBLIC_TOKEN){
+		printf("private || public -------- \n");
 		result=true ;
 	}
 	return result;
 }
 
 bool _class_implement(){
+	printf("CHECKING _class_implement()  \n");
 	bool result=false;
 	while(_methode_declaration()){
+		printf("_methode_declaration()-------- TIME TO CHECK  [_methode_declaration()] THEN _main_implement() || } \n");
 		getNext();
 	}
-	if(_main_implement() || node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN) result=true; //Pas 100% ms ds plupart des cas usuels.
+	if(_main_implement() || node_token_courant->Symbole_Courant.code==ACCOL_FER_TOKEN) {//Pas 100% ms ds plupart des cas usuels.
+		printf("_main_implement() || } --------  \n");		
+		result=true; 
+	}
 	return result;
 }
 
 bool _methode_declaration(){
+	printf("CHECKING _methode_declaration()  \n");
 	bool result= false;
 	if(_p_p()){
+		printf("_p_p()-------- TIME TO CHECK  [STATIC_TOKEN] THEN _return_type()   \n");
 		getNext();
 		if(node_token_courant->Symbole_Courant.code==STATIC_TOKEN) getNext();
 		if(_return_type()){
+			printf("_return_type()-------- TIME TO CHECK  _methode_name()   \n");
 			getNext();
 			if(_methode_name()){
+				printf("_methode_name()-------- TIME TO CHECK  (   \n");
 				getNext();
 				if(node_token_courant->Symbole_Courant.code==PAR_OUV_TOKEN){
 					getNext();
+					printf(" ( -------- TIME TO CHECK  [_formal_parameter_list()] THEN )   \n");
 					if(_formal_parameter_list()) getNext(); //96%
 					if(node_token_courant->Symbole_Courant.code==PAR_FER_TOKEN){
+						printf(" ) -------- TIME TO CHECK _methode_body()  \n");
 						getNext();
 						result = _methode_body();
 					}
@@ -123,6 +163,7 @@ bool _methode_declaration(){
 }
 
 bool _main_implement(){
+	printf(" CHECKING  _main_implement()  \n");
 	bool result= false;
 	if(node_token_courant->Symbole_Courant.code==PUBLIC_TOKEN) getNext();
 	if(node_token_courant->Symbole_Courant.code==STATIC_TOKEN){
