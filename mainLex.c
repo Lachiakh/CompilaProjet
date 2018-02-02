@@ -28,16 +28,16 @@ int main( int argc, char ** argv ) {
             }
         // AfficherToken();
        node_token_courant=list->p_head ;
-       _start() ;
+     // _start() ;
 
-  /*  for(int i=0;i<30;i++){
+    for(int i=0;i<30;i++){
     if(node_token_courant!=NULL){
             printf(" #%d....yes we can...%s\n",node_token_courant->Symbole_Courant.code,node_token_courant->Symbole_Courant.nom) ;
             fflush(stdout);
             getNext() ;
     }
 }
-*/
+
     printf("****************************************************************************\n") ;
      getBack() ;
     while(node_token_courant!=NULL){

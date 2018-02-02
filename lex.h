@@ -8,7 +8,7 @@ enum bool { false, true } ;
 typedef enum bool bool ;
 
 //*************************** fonction syntaxique **********************
- bool _start();
+/* bool _start();
 bool _name_space();
 bool _program();
 bool _name_space_implement();
@@ -67,7 +67,7 @@ bool _array_creation_expression();
 bool _array_length();
 bool _array_initializer();
 
-
+*/
 
 
 //************************** fonction lexical ***********************
