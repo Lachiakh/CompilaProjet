@@ -1,7 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifndef LEX_H
 #define LEX_H 
 
+<<<<<<< HEAD
 
 
 enum bool { false, true } ;
@@ -86,8 +89,10 @@ void FermerFichier() ;
 
 
  // ******CARACTERES SPECIAUX******
+=======
+// ******CARACTERES SPECIAUX******
+>>>>>>> 4723c49269b8fd943ce171996013340124e2e0b3
 enum CodeLex{
-
 PLUS_PLUS_TOKEN  ,// ++    __________   
 MOINS_MOINS_TOKEN ,// __    __________    
 PLUS_EGALE_TOKEN ,// +=    __________    
@@ -166,14 +171,14 @@ POINT_VIRG_TOKEN ,// ;     __________
 
 
 //******AUTRES******
-//!!!! Dans ce cas la valeur du token est aussi à stocker !!!!
+//!!!! Dans ce cas la valeur du token est aussi Ã  stocker !!!!
 
 INUM_TOKEN , //     (un nombre entier)
 FNUM_TOKEN  ,  //   (un nombre avec virgule)
-CHAINE_TOKEN ,   // (une chaine de charactères)
-CHARACTER_TOKEN,   // (un charactère)
+CHAINE_TOKEN ,   // (une chaine de charactÃ¨res)
+CHARACTER_TOKEN,   // (un charactÃ¨re)
 IDF_TOKEN       ,// (un identificateur ( =lettre {character} )
-METH_IDF_TOKEN ,// (c'est un identificateur mais qui représente le nom d'une méthode)
+METH_IDF_TOKEN ,// (c'est un identificateur mais qui reprÃ©sente le nom d'une mÃ©thode)
 
 //********** Symboles erronee/inconnus***************
 SYMBOLE_INCONNU_TOKEN,
@@ -183,6 +188,11 @@ FIN_TOKEN
 
     
 };
+
+// ******DEFINITION DES STRUCTURES & ENUMERATIONS******
+enum bool { false, true } ;
+typedef enum bool bool ;
+
 typedef enum CodeLex CodeLex ;
 
 struct Symbole{
@@ -206,11 +216,91 @@ typedef struct dlist
     struct node_token *p_head;
 } Dlist;
 
+//************************** fonction lexical ***********************
+void PasserCommentaire();
+void SymbolSuivant();
+int CodageLex( char * nomSymbole );
+void LireCaractere();
+void LireChaine();
+void LireMot();
+void LireNombre();
+void LireSpecial();
+int isSpecial(char c);
+void AfficherToken();
+void OuvrirFichier( const char * nomFichier ) ;
+void FermerFichier() ;
+
+//*************************** fonction syntaxique **********************
+bool _starting();
+bool _name_space();
+bool _program();
+bool _name_space_implement();
+bool _p_p();
+bool _class_implement();
+bool _main_implement();
+bool _methode_declaration();
+bool _return_type();
+bool _methode_name();
+bool _formal_parameter_list();
+bool _fixed_parameters();
+bool _fixed_parameter();
+bool _parameter_array();
+bool _methode_body();
+bool _type();
+bool _value_type();
+bool _array_type();
+bool _block();
+bool _statement();
+bool _embedded_statement();
+bool _print();
+bool _declaration_statement();
+bool _local_variable_declaration();
+bool _variable_declarator();
+bool _variable_initializer();
+bool _local_constant_declaration();
+bool _constant_declarator();
+bool _statement_expression();
+bool _selection_statement();
+bool _switch_section();
+bool _switch_label();
+bool _iteration_statement();
+bool _for_initializer();
+bool _for_iterator();
+bool _jump_statement();
+bool _boolean_expression();
+bool _expression();
+bool _assignment();
+bool _assignment_body();
+bool _assignment_operator();
+bool _conditional_or_expression();
+bool _conditional_and_expression();
+bool _inclusive_or_expression();
+bool _equality_operator();
+bool _relational_expression();
+bool _relational_operator();
+bool _additive_expression();
+bool _additive_operator();
+bool _multiplicative_expression();
+bool _multiplicative_operator();
+bool _primary_expression();
+bool _invocation_expression();
+bool _argument_list();
+bool _argument();
+bool _array_creation_expression();
+bool _array_length();
+bool _array_initializer();
+
 //*************************** Fonction mainLex *********************
 Dlist *dlist_new(void) ;
 Dlist *dlist_append(Dlist *p_list,Symbole symbole) ;
 void dlist_delete(Dlist **p_list) ;
 void getNext() ;
 void getBack() ;
+
+FILE* fichier;
+Symbole symboleCourant;
+char caractereCourant; 
+Dlist *list ;
+node_token *node_token_courant ;
 
 #endif

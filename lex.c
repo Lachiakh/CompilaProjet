@@ -17,10 +17,10 @@
 
 
 FILE* fichier = NULL;
-Symbole symboleCourant;
-char caractereCourant; 
+//Symbole symboleCourant;
+//char caractereCourant; 
 
-//Lis un caractère à partir du flux d'entrée ( fichier ), MetaRegle : Pas de distinction entre Majuscule et Minuscule
+//Lis un caractère à partir du flux d'entrée ( fichier )
 void LireCaractere() {
     char c = fgetc(fichier);
    // if ( isalpha(c) ) c = tolower(c);
