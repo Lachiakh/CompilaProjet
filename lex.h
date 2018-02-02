@@ -1,15 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
 #ifndef LEX_H
 #define LEX_H 
 
-
 // ******CARACTERES SPECIAUX******
 enum CodeLex{
-
 PLUS_PLUS_TOKEN  ,// ++    __________   
 MOINS_MOINS_TOKEN ,// __    __________    
 PLUS_EGALE_TOKEN ,// +=    __________    
@@ -88,14 +84,14 @@ POINT_VIRG_TOKEN ,// ;     __________
 
 
 //******AUTRES******
-//!!!! Dans ce cas la valeur du token est aussi à stocker !!!!
+//!!!! Dans ce cas la valeur du token est aussi Ã  stocker !!!!
 
 INUM_TOKEN , //     (un nombre entier)
 FNUM_TOKEN  ,  //   (un nombre avec virgule)
-CHAINE_TOKEN ,   // (une chaine de charactères)
-CHARACTER_TOKEN,   // (un charactère)
+CHAINE_TOKEN ,   // (une chaine de charactÃ¨res)
+CHARACTER_TOKEN,   // (un charactÃ¨re)
 IDF_TOKEN       ,// (un identificateur ( =lettre {character} )
-METH_IDF_TOKEN ,// (c'est un identificateur mais qui représente le nom d'une méthode)
+METH_IDF_TOKEN ,// (c'est un identificateur mais qui reprÃ©sente le nom d'une mÃ©thode)
 
 //********** Symboles erronee/inconnus***************
 SYMBOLE_INCONNU_TOKEN,
@@ -207,7 +203,6 @@ bool _array_creation_expression();
 bool _array_length();
 bool _array_initializer();
 
-
 //*************************** Fonction mainLex *********************
 Dlist *dlist_new(void) ;
 Dlist *dlist_append(Dlist *p_list,Symbole symbole) ;
@@ -215,13 +210,10 @@ void dlist_delete(Dlist **p_list) ;
 void getNext() ;
 void getBack() ;
 
-
-//ADDED BY ME
 FILE* fichier;
 Symbole symboleCourant;
 char caractereCourant; 
 Dlist *list ;
 node_token *node_token_courant ;
-//END OF "ADDED BY ME"
 
 #endif

@@ -14,6 +14,10 @@ Dlist *list = NULL; /* Déclaration d'une liste vide */
 //node_token *node_token_courant ;
 
 
+Dlist *list = NULL; /* Déclaration d'une liste vide */
+node_token *node_token_courant ;
+
+
 int main( int argc, char ** argv ) {
 	OuvrirFichier("source.txt");
 	LireCaractere();
@@ -54,6 +58,7 @@ int main( int argc, char ** argv ) {
 
        return 0;
 }
+
 
 
 
